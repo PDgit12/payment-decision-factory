@@ -1,0 +1,164 @@
+spec_id: "fraud_screener_v1"
+name: "Pre-Auth Fraud & Velocity Screener Specification"
+version: "1.0.0"
+domain: "fraud_risk"
+description: "Declarative decision policy for pre-authorization risk scoring, rapid card-testing velocity detection, and IP-BIN geo-anomaly screening."
+
+sla:
+  max_latency_ms: 15.0
+  target_latency_ms: 6.0
+  p99_latency_ms: 10.0
+  timeout_action: "review"
+
+schema:
+  inputs:
+    amount:
+      type: "float"
+      required: true
+      min: 0.01
+      max: 1000000.0
+      description: "Transaction amount in primary currency units"
+    currency:
+      type: "string"
+      required: true
+      enum: ["USD", "EUR", "GBP", "CAD", "AUD", "JPY", "CHF", "SEK", "NOK", "SGD"]
+      description: "ISO 4217 three-letter currency code"
+    card_brand:
+      type: "string"
+      required: true
+      enum: ["visa", "mastercard", "amex", "discover", "jcb", "unionpay", "diners"]
+      description: "Payment card network brand"
+    bin_country:
+      type: "string"
+      required: true
+      regex: "^[A-Z]{2}$"
+      description: "ISO 3166-1 alpha-2 card issuing country code"
+    ip_country:
+      type: "string"
+      required: false
+      regex: "^[A-Z]{2}$"
+      description: "ISO 3166-1 alpha-2 client IP geolocation"
+    mcc:
+      type: "string"
+      required: true
+      regex: "^[0-9]{4}$"
+      description: "4-digit ISO 18245 Merchant Category Code"
+    velocity_1h:
+      type: "integer"
+      required: true
+      min: 0
+      max: 500
+      description: "Transaction attempts with this card/fingerprint in last 60 minutes"
+    velocity_24h:
+      type: "integer"
+      required: false
+      min: 0
+      max: 2000
+      description: "Transaction attempts with this card/fingerprint in last 24 hours"
+    is_anonymous_ip:
+      type: "boolean"
+      required: false
+      description: "Whether the transaction IP is identified as VPN, Tor, or public proxy"
+    avs_code:
+      type: "string"
+      required: false
+      enum: ["match", "partial_match", "no_match", "unavailable"]
+      description: "Address Verification Service result"
+    cvv_result:
+      type: "string"
+      required: false
+      enum: ["match", "no_match", "not_provided"]
+      description: "Card Verification Value check result"
+    email_domain_age_days:
+      type: "integer"
+      required: false
+      min: 0
+      description: "Age in days of customer email domain registration"
+
+choices:
+  allow:
+    display_name: "Approve Transaction"
+    provider: "fraud_screener"
+    region: "GLOBAL"
+    base_fee_bps: 0
+    fixed_fee_cents: 0
+    sla_expected_ms: 5.0
+    specialties: ["low_risk_clearing", "instant_pass"]
+    metadata:
+      action: "ALLOW"
+      risk_tier: "low"
+      max_risk_score: 0.25
+
+  review:
+    display_name: "Hold for Manual Review / Step-Up"
+    provider: "fraud_screener"
+    region: "GLOBAL"
+    base_fee_bps: 0
+    fixed_fee_cents: 0
+    sla_expected_ms: 8.0
+    specialties: ["risk_analyst_review", "step_up_challenge"]
+    metadata:
+      action: "REVIEW"
+      risk_tier: "medium"
+      min_risk_score: 0.25
+      max_risk_score: 0.70
+
+  decline:
+    display_name: "Pre-Auth Decline"
+    provider: "fraud_screener"
+    region: "GLOBAL"
+    base_fee_bps: 0
+    fixed_fee_cents: 0
+    sla_expected_ms: 5.0
+    specialties: ["bot_blocking", "card_testing_mitigation"]
+    metadata:
+      action: "DECLINE"
+      risk_tier: "high"
+      min_risk_score: 0.70
+
+primitives:
+  choice:
+    default_choice: "review"
+    fallback_chain:
+      allow: ["review", "decline"]
+      review: ["decline", "allow"]
+      decline: ["review"]
+
+  score:
+    scaling_method: "temperature_scaling"
+    temperature: 0.75
+    brier_score_target: 0.045
+    confidence_floor: 0.40
+    uncertainty_threshold: 0.35
+    utility_factors:
+      velocity_weight: 0.35
+      anomaly_weight: 0.35
+      mismatch_weight: 0.30
+
+  noul:
+    circuit_breaker_active: true
+    fallback_action: "DECLINE"
+    rules:
+      - name: "card_testing_velocity_burst"
+        condition: "velocity_1h >= 12"
+        action: "DECLINE"
+        reason: "Card attempt velocity exceeds safe threshold (>12/hr); active automated card testing attack detected."
+      - name: "cvv_hard_mismatch"
+        condition: "cvv_result == 'no_match'"
+        action: "DECLINE"
+        reason: "CVV verification failed hard mismatch."
+      - name: "high_ticket_anonymous_proxy"
+        condition: "is_anonymous_ip == true and amount >= 5000.0 and bin_country != ip_country"
+        action: "DECLINE"
+        reason: "High ticket order originating from anonymous proxy with international issuing bank mismatch."
+      - name: "cross_border_velocity_anomaly"
+        condition: "bin_country != ip_country and velocity_1h >= 5"
+        action: "REVIEW"
+        reason: "Elevated transaction velocity originating outside card issuing country."
+
+calibration:
+  method: "temperature_scaling"
+  temperature: 0.75
+  brier_score_target: 0.045
+  expected_calibration_error: 0.028
+  validation_sample_size: 2500

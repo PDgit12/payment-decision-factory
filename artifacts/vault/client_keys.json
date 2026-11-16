@@ -1,0 +1,72 @@
+[
+  {
+    "key_id": "key_default_root",
+    "client_id": "enterprise_client",
+    "license_key": "lic_mac_specialist_local_2026",
+    "label": "Primary Production Root Key",
+    "created_at": "2026-11-16T08:20:46.757271+00:00",
+    "expires_at": null,
+    "is_active": true,
+    "permissions": [
+      "read",
+      "evaluate",
+      "export"
+    ]
+  },
+  {
+    "key_id": "key_998d5a749ff0",
+    "client_id": "test_corp",
+    "license_key": "lic_test_corp_a1f889e97f42d5f2ae7d0d39626521b8",
+    "label": "Test Key",
+    "created_at": "2026-11-16T08:20:46.858434+00:00",
+    "expires_at": null,
+    "is_active": true,
+    "permissions": [
+      "read",
+      "evaluate",
+      "export"
+    ]
+  },
+  {
+    "key_id": "key_9d79af7e9839",
+    "client_id": "test_merchant_corp",
+    "license_key": "lic_test_merchant_corp_e9a20ebbb21fb432d87ec3b27380d3fe",
+    "label": "Stripe/Adyen Hotpath Key",
+    "created_at": "2026-11-16T08:21:08.524543+00:00",
+    "expires_at": null,
+    "is_active": true,
+    "permissions": [
+      "read",
+      "evaluate",
+      "export"
+    ]
+  },
+  {
+    "key_id": "key_9f4ec77169ee",
+    "client_id": "test_merchant_corp",
+    "license_key": "lic_test_merchant_corp_cef8361b7c65b24cccd44a9c07a69411",
+    "label": "Stripe/Adyen Hotpath Key",
+    "created_at": "2026-11-16T08:22:22.756052+00:00",
+    "expires_at": null,
+    "is_active": true,
+    "permissions": [
+      "read",
+      "evaluate",
+      "export"
+    ]
+  },
+  {
+    "key_id": "key_5b8588b76ade",
+    "client_id": "enterprise_client",
+    "license_key": "lic_enterprise_client_7e0dc31244706222edcebef6bb40241e",
+    "label": "Production Routing Key",
+    "created_at": "2026-11-16T11:57:21.973295+00:00",
+    "expires_at": null,
+    "is_active": true,
+    "permissions": [
+      "read",
+      "evaluate",
+      "export"
+    ]
+  }
+]

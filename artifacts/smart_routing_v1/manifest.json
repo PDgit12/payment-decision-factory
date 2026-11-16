@@ -1,0 +1,35 @@
+{
+  "bundle_id": "bundle_smart_routing_v1_1794718963",
+  "spec_id": "smart_routing_v1",
+  "spec_name": "Smart Payment Gateway Routing Specification",
+  "spec_version": "1.0.0",
+  "domain": "payment_routing",
+  "created_at": 1794718963.6737359,
+  "checksum_sha256": "929796c967d986b95a817bf2c94f36d664605a42d6b4e88333fc19be478db7d0",
+  "sla": {
+    "max_latency_ms": 25.0,
+    "target_latency_ms": 12.0,
+    "p99_latency_ms": 20.0,
+    "timeout_action": "fallback"
+  },
+  "input_fields": [
+    "amount",
+    "currency",
+    "card_brand",
+    "bin_country",
+    "mcc",
+    "velocity_1h"
+  ],
+  "choices": [
+    "stripe_us",
+    "adyen_eu",
+    "checkout_crossborder"
+  ],
+  "default_choice": "checkout_crossborder",
+  "supported_interfaces": [
+    "in_process_python",
+    "sidecar_http",
+    "typescript_sdk"
+  ],
+  "entrypoint": "payment_decision_factory.core.engine.DecisionEngine"
+}

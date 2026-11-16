@@ -1,0 +1,264 @@
+spec_id: smart_routing_v1
+name: Smart Payment Gateway Routing Specification
+version: 1.0.0
+domain: payment_routing
+description: Declarative decision policy for high-throughput, low-latency intelligent
+  payment gateway dispatch across Stripe US, Adyen EU, and Checkout.com Global rails.
+sla:
+  max_latency_ms: 25.0
+  target_latency_ms: 12.0
+  p99_latency_ms: 20.0
+  timeout_action: fallback
+schema:
+  inputs:
+    amount:
+      type: float
+      required: true
+      default: null
+      min: 0.01
+      max: 1000000.0
+      enum: null
+      regex: null
+      description: Transaction amount in primary currency units (e.g., 49.99)
+    currency:
+      type: string
+      required: true
+      default: null
+      min: null
+      max: null
+      enum:
+      - USD
+      - EUR
+      - GBP
+      - CAD
+      - AUD
+      - JPY
+      - CHF
+      - SEK
+      - NOK
+      - SGD
+      regex: null
+      description: ISO 4217 three-letter currency code
+    card_brand:
+      type: string
+      required: true
+      default: null
+      min: null
+      max: null
+      enum:
+      - visa
+      - mastercard
+      - amex
+      - discover
+      - jcb
+      - unionpay
+      - diners
+      regex: null
+      description: Payment card network brand
+    bin_country:
+      type: string
+      required: true
+      default: null
+      min: null
+      max: null
+      enum: null
+      regex: ^[A-Z]{2}$
+      description: ISO 3166-1 alpha-2 card issuing country code (e.g., US, GB, DE)
+    mcc:
+      type: string
+      required: true
+      default: null
+      min: null
+      max: null
+      enum: null
+      regex: ^[0-9]{4}$
+      description: 4-digit ISO 18245 Merchant Category Code (e.g., 5411, 5732, 7995)
+    velocity_1h:
+      type: integer
+      required: true
+      default: null
+      min: 0.0
+      max: 500.0
+      enum: null
+      regex: null
+      description: Number of transaction attempts associated with card/fingerprint
+        in last 60 minutes
+choices:
+  stripe_us:
+    display_name: Stripe US Processing Rail
+    provider: stripe
+    region: US
+    base_fee_bps: 290.0
+    fixed_fee_cents: 30.0
+    preferred_currencies:
+    - USD
+    - CAD
+    preferred_countries:
+    - US
+    - CA
+    - MX
+    max_single_tx: 250000.0
+    sla_expected_ms: 10.0
+    specialties:
+    - domestic_us_optimization
+    - instant_ach_and_cards
+    - amex_direct_interchange
+    - high_conversion_domestic
+    metadata:
+      settlement_days: 2
+      tier: tier_1_domestic
+  adyen_eu:
+    display_name: Adyen European Direct Clearing Rail
+    provider: adyen
+    region: EU
+    base_fee_bps: 120.0
+    fixed_fee_cents: 10.0
+    preferred_currencies:
+    - EUR
+    - GBP
+    - CHF
+    - SEK
+    - NOK
+    preferred_countries:
+    - GB
+    - DE
+    - FR
+    - NL
+    - IE
+    - ES
+    - IT
+    - SE
+    - 'NO'
+    - DK
+    - BE
+    - AT
+    - CH
+    max_single_tx: 500000.0
+    sla_expected_ms: 12.0
+    specialties:
+    - psd2_sca_exemptions
+    - interchange_plus_plus
+    - local_european_rails
+    - sepa_instant_interop
+    metadata:
+      settlement_days: 1
+      tier: tier_1_european
+  checkout_crossborder:
+    display_name: Checkout.com Global Cross-Border Rail
+    provider: checkout
+    region: GLOBAL
+    base_fee_bps: 240.0
+    fixed_fee_cents: 20.0
+    preferred_currencies:
+    - USD
+    - EUR
+    - GBP
+    - AUD
+    - JPY
+    - SGD
+    preferred_countries:
+    - '*'
+    max_single_tx: 1000000.0
+    sla_expected_ms: 15.0
+    specialties:
+    - cross_border_fx_hedging
+    - multicurrency_resilience
+    - high_ticket_authorization
+    - apac_latam_routing
+    metadata:
+      settlement_days: 2
+      tier: tier_1_crossborder
+primitives:
+  choice:
+    default_choice: checkout_crossborder
+    fallback_chain:
+      stripe_us:
+      - checkout_crossborder
+      - adyen_eu
+      adyen_eu:
+      - checkout_crossborder
+      - stripe_us
+      checkout_crossborder:
+      - stripe_us
+      - adyen_eu
+    weights:
+      currency_affinity: 0.35
+      geo_affinity: 0.4
+      brand_affinity: 0.15
+      cost_optimization: 0.1
+    affinities:
+      currencies:
+        stripe_us:
+          USD: 1.0
+          CAD: 0.8
+          EUR: 0.2
+          GBP: 0.2
+        adyen_eu:
+          EUR: 1.0
+          GBP: 0.95
+          CHF: 0.85
+          SEK: 0.8
+          USD: 0.3
+        checkout_crossborder:
+          USD: 0.7
+          EUR: 0.7
+          GBP: 0.7
+          AUD: 0.9
+          JPY: 0.9
+          SGD: 0.9
+      brands:
+        stripe_us:
+          amex: 0.95
+          visa: 0.85
+          mastercard: 0.85
+          discover: 0.9
+        adyen_eu:
+          visa: 0.9
+          mastercard: 0.9
+          amex: 0.7
+        checkout_crossborder:
+          unionpay: 0.95
+          jcb: 0.95
+          visa: 0.8
+          mastercard: 0.8
+  score:
+    scaling_method: temperature_scaling
+    temperature: 0.85
+    brier_score_target: 0.08
+    confidence_floor: 0.4
+    uncertainty_threshold: 0.38
+    utility_factors:
+      acceptance_weight: 0.5
+      cost_efficiency_weight: 0.3
+      latency_weight: 0.2
+  noul:
+    circuit_breaker_active: true
+    fallback_action: STEP_DOWN_CHALLENGE
+    max_velocity_threshold: 15
+    high_value_velocity_threshold: 6
+    high_value_amount_threshold: 25000.0
+    suspicious_mccs:
+    - '7995'
+    - '6051'
+    - '6211'
+    min_confidence_floor: 0.35
+    rules:
+    - name: excessive_velocity_circuit_breaker
+      condition: velocity_1h >= 15
+      action: STEP_DOWN_CHALLENGE
+      reason: Card attempt velocity exceeds safe threshold (>15/hr); risk of card
+        testing or automated attack.
+    - name: high_value_velocity_burst
+      condition: amount >= 25000.0 and velocity_1h >= 6
+      action: MANUAL_REVIEW
+      reason: High ticket transaction combined with elevated hourly velocity.
+    - name: uncertainty_boundary
+      condition: confidence < 0.35
+      action: ROUTE_TO_DEFAULT_WITH_FLAG
+      reason: Decision entropy too high; routed to resilient global fallback rail.
+calibration:
+  method: temperature_scaling
+  temperature: 0.85
+  brier_score_target: 0.08
+  expected_calibration_error: 0.035
+  validation_sample_size: 1000

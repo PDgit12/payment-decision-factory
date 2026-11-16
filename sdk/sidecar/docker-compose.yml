@@ -1,0 +1,56 @@
+version: "3.8"
+
+services:
+  payment-decision-sidecar:
+    build:
+      context: ../..
+      dockerfile: sdk/sidecar/Dockerfile
+    container_name: payment-decision-sidecar
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - SPEC_PATH=/app/specs/smart_routing.yaml
+      - WORKERS=2
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
+        reservations:
+          cpus: "0.25"
+          memory: 128M
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 2s
+      retries: 3
+    networks:
+      - payment-mesh
+
+  mock-checkout-service:
+    image: python:3.11-slim
+    container_name: mock-checkout-service
+    restart: unless-stopped
+    command: >
+      sh -c "pip install httpx && python -c '
+      import time, httpx
+      print(\"Checkout service waiting for decision sidecar...\")
+      time.sleep(3)
+      client = httpx.Client(base_url=\"http://payment-decision-sidecar:8080\")
+      resp = client.get(\"/health\")
+      print(\"Sidecar health:\", resp.json())
+      decision = client.post(\"/decide\", json={\"amount\": 99.50, \"currency\": \"USD\", \"card_brand\": \"visa\", \"bin_country\": \"US\", \"mcc\": \"5411\", \"velocity_1h\": 1})
+      print(\"Checkout routed to gateway:\", decision.json()[\"decision\"])
+      while True: time.sleep(60)
+      '"
+    depends_on:
+      payment-decision-sidecar:
+        condition: service_healthy
+    networks:
+      - payment-mesh
+
+networks:
+  payment-mesh:
+    driver: bridge

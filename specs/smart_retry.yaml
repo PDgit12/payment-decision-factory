@@ -1,0 +1,201 @@
+spec_id: "smart_retry_v1"
+name: "Intelligent Decline Recovery & Retry Timing Specification"
+version: "1.0.0"
+domain: "decline_recovery"
+description: "Declarative decision policy for post-decline recovery, optimizing backoff windows, scheme compliance, and payday-aligned authorization retry timing."
+
+sla:
+  max_latency_ms: 20.0
+  target_latency_ms: 7.0
+  p99_latency_ms: 12.0
+  timeout_action: "terminal_no_retry"
+
+schema:
+  inputs:
+    decline_code:
+      type: "string"
+      required: true
+      enum: [
+        "insufficient_funds",
+        "do_not_honor",
+        "processor_timeout",
+        "card_velocity_exceeded",
+        "stolen_card",
+        "lost_card",
+        "expired_card",
+        "generic_decline",
+        "system_error"
+      ]
+      description: "ISO 8583 response code or normalized gateway decline reason"
+    decline_category:
+      type: "string"
+      required: true
+      enum: ["soft_decline", "hard_decline", "technical_error"]
+      description: "Decline classification tier"
+    retry_attempt:
+      type: "integer"
+      required: true
+      min: 1
+      max: 10
+      description: "Ordinal count of retry attempt (1 for initial retry, 2 for second, etc.)"
+    amount:
+      type: "float"
+      required: true
+      min: 0.01
+      max: 1000000.0
+      description: "Transaction amount"
+    currency:
+      type: "string"
+      required: true
+      enum: ["USD", "EUR", "GBP", "CAD", "AUD", "JPY", "CHF", "SEK", "NOK", "SGD"]
+      description: "ISO 4217 three-letter currency code"
+    card_brand:
+      type: "string"
+      required: true
+      enum: ["visa", "mastercard", "amex", "discover", "jcb", "unionpay", "diners"]
+      description: "Payment card brand"
+    bin_country:
+      type: "string"
+      required: true
+      regex: "^[A-Z]{2}$"
+      description: "ISO 3166-1 alpha-2 card issuing bank country code"
+    is_subscription:
+      type: "boolean"
+      required: false
+      default: true
+      description: "True for recurring subscription billing cycles"
+    billing_cycle_day:
+      type: "integer"
+      required: false
+      min: 1
+      max: 31
+      default: 1
+      description: "Day of the month customer was originally billed"
+    day_of_week:
+      type: "integer"
+      required: false
+      min: 0
+      max: 6
+      default: 0
+      description: "Day of week (0=Monday, 6=Sunday) of the decline"
+
+choices:
+  retry_immediate:
+    display_name: "Immediate Cascade Reroute"
+    provider: "smart_recovery"
+    region: "GLOBAL"
+    base_fee_bps: 0
+    fixed_fee_cents: 0
+    sla_expected_ms: 5.0
+    specialties: ["network_timeout_failover", "processor_retry"]
+    metadata:
+      action: "RETRY_IMMEDIATE"
+      recommended_backoff_hours: 0.0
+      expected_recovery_rate: 0.72
+
+  retry_short_backoff:
+    display_name: "Short Intraday Backoff (4h - 12h)"
+    provider: "smart_recovery"
+    region: "GLOBAL"
+    base_fee_bps: 0
+    fixed_fee_cents: 0
+    sla_expected_ms: 7.0
+    specialties: ["intraday_limit_clearing", "velocity_reset"]
+    metadata:
+      action: "RETRY_SHORT_BACKOFF"
+      recommended_backoff_hours: 8.0
+      expected_recovery_rate: 0.58
+
+  retry_smart_window:
+    display_name: "Optimal Smart Multi-Day Backoff (24h - 72h)"
+    provider: "smart_recovery"
+    region: "GLOBAL"
+    base_fee_bps: 0
+    fixed_fee_cents: 0
+    sla_expected_ms: 7.0
+    specialties: ["liquidity_replenishment", "banking_day_clearing"]
+    metadata:
+      action: "RETRY_SMART_WINDOW"
+      recommended_backoff_hours: 48.0
+      expected_recovery_rate: 0.64
+
+  retry_payday_window:
+    display_name: "Payday Aligned Window (1st / 15th / Friday)"
+    provider: "smart_recovery"
+    region: "GLOBAL"
+    base_fee_bps: 0
+    fixed_fee_cents: 0
+    sla_expected_ms: 8.0
+    specialties: ["salary_deposit_targeting", "monthly_settlement"]
+    metadata:
+      action: "RETRY_PAYDAY_WINDOW"
+      recommended_backoff_hours: 96.0
+      expected_recovery_rate: 0.78
+
+  terminal_no_retry:
+    display_name: "Terminal Hard Decline - Cease Retries"
+    provider: "smart_recovery"
+    region: "GLOBAL"
+    base_fee_bps: 0
+    fixed_fee_cents: 0
+    sla_expected_ms: 4.0
+    specialties: ["scheme_compliance", "card_brand_fine_prevention"]
+    metadata:
+      action: "TERMINAL_NO_RETRY"
+      recommended_backoff_hours: -1.0
+      expected_recovery_rate: 0.0
+
+primitives:
+  choice:
+    default_choice: "terminal_no_retry"
+    fallback_chain:
+      retry_immediate: ["retry_short_backoff", "terminal_no_retry"]
+      retry_short_backoff: ["retry_smart_window", "terminal_no_retry"]
+      retry_smart_window: ["terminal_no_retry"]
+      retry_payday_window: ["retry_smart_window", "terminal_no_retry"]
+      terminal_no_retry: []
+    weights:
+      currency_affinity: 0.20
+      geo_affinity: 0.20
+      brand_affinity: 0.20
+      cost_optimization: 0.40
+
+  score:
+    scaling_method: "temperature_scaling"
+    temperature: 0.85
+    brier_score_target: 0.06
+    confidence_floor: 0.40
+    uncertainty_threshold: 0.35
+    utility_factors:
+      decline_type_affinity: 0.42
+      attempt_count_penalty: 0.28
+      payday_proximity: 0.18
+      amount_elasticity: 0.12
+
+  noul:
+    circuit_breaker_active: true
+    fallback_action: "terminal_no_retry"
+    rules:
+      - name: "hard_decline_zero_tolerance"
+        condition: "decline_category == 'hard_decline' or decline_code in ['stolen_card', 'lost_card', 'account_closed']"
+        action: "terminal_no_retry"
+        reason: "Card network scheme rules (Mastercard/Visa) strictly prohibit retrying hard declines."
+      - name: "scheme_excessive_retry_cap"
+        condition: "retry_attempt >= 4"
+        action: "terminal_no_retry"
+        reason: "Exceeded 4 retry attempts; card brand excessive retry penalty boundary reached."
+      - name: "technical_error_instant_recovery"
+        condition: "decline_category == 'technical_error' or decline_code in ['processor_timeout', 'system_error']"
+        action: "retry_immediate"
+        reason: "Transient technical gateway error; immediate failover allowed."
+      - name: "insufficient_funds_first_attempt"
+        condition: "decline_code == 'insufficient_funds' and retry_attempt == 1"
+        action: "retry_smart_window"
+        reason: "Insufficient funds soft decline on initial attempt; 24-48 hour replenishment window."
+
+calibration:
+  method: "temperature_scaling"
+  temperature: 0.85
+  brier_score_target: 0.06
+  expected_calibration_error: 0.038
+  validation_sample_size: 1500

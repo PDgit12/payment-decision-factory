@@ -1,0 +1,17 @@
+{
+  "total_test_samples": 12,
+  "avg_latency_ms": 0.065,
+  "p95_latency_ms": 0.072,
+  "p99_latency_ms": 0.073,
+  "sla_target_ms": 25.0,
+  "sla_passed": true,
+  "brier_score": 0.2172,
+  "brier_target": 0.08,
+  "calibration_passed": false,
+  "choices_distribution": {
+    "stripe_us": 4,
+    "adyen_eu": 4,
+    "checkout_crossborder": 4
+  },
+  "noul_triggers_count": 1
+}

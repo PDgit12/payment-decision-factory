@@ -1,0 +1,30 @@
+{
+  "format": "SDMPKG/1.0",
+  "manifest": {
+    "format": "SDMPKG/1.0",
+    "package_id": "sdmpkg_02464e7d5c14",
+    "client_id": "client_ts_corp",
+    "domain": "payment_routing",
+    "model_type": "specialist_sdm",
+    "created_at": 1794732121.93,
+    "expires_at": 1826268121.93,
+    "sha256_checksum": "b9c55b912e17d7af3c40e48f29860e09095cf1b28b73222654f76c8d919c8d58",
+    "input_dim": 30,
+    "num_classes": 3,
+    "choices": [
+      "stripe_us",
+      "adyen_eu",
+      "checkout_crossborder"
+    ],
+    "spec": {}
+  },
+  "crypto": {
+    "cipher": "AES-256-GCM",
+    "kdf": "PBKDF2-HMAC-SHA256",
+    "kdf_iterations": 100000,
+    "salt_hex": "0d9763652e0ec691fcb0a152eac755e7",
+    "iv_hex": "5507463f1659264627253e5e",
+    "tag_hex": "6f405af56f0671af883f18695f5e497c"
+  },
+  "ciphertext": "Clp/A3U5/UB3CRA0QpnDbBmJVNRe6KjuKfPhZrrPaRJvrLxZyjBGrtfoLB5606yRYN1bdyAL5MFaRqXct0YYo+LMVEdfC1D2Pz1Zq+9iEG5eyQmMW/0sROa4GVNG3Iw2IEvELaQ1/6J8MD3zqjx/DezGVHn9r21V6AAkJ/R+n6AaOpmutPjVmXRty0yeDd1T+E1ymqBQUfhjYuTlBlSIA/N+oaF8Te448GFNylwf0ZtzIdcpyYt1tTfvCyycamfMuHUOShZ2lc9aAlWtvyWSB0eMgc0t5gsfeEl0An7Y"
+}

@@ -1,0 +1,191 @@
+spec_id: "dynamic_3ds_v1"
+name: "Dynamic 3D-Secure & SCA Exemption Engine Specification"
+version: "1.0.0"
+domain: "sca_3ds_exemption"
+description: "Declarative policy for optimizing Strong Customer Authentication (SCA) under European PSD2 RTS, maximizing frictionless conversion via TRA and Low-Value exemptions."
+
+sla:
+  max_latency_ms: 15.0
+  target_latency_ms: 5.0
+  p99_latency_ms: 10.0
+  timeout_action: "challenge"
+
+schema:
+  inputs:
+    amount:
+      type: "float"
+      required: true
+      min: 0.01
+      max: 1000000.0
+      description: "Transaction amount in transaction currency"
+    currency:
+      type: "string"
+      required: true
+      enum: ["USD", "EUR", "GBP", "CAD", "AUD", "JPY", "CHF", "SEK", "NOK", "SGD"]
+      description: "ISO 4217 currency code"
+    amount_eur:
+      type: "float"
+      required: false
+      min: 0.0
+      default: 0.0
+      description: "Transaction amount converted to EUR for statutory PSD2 RTS compliance checks"
+    bin_country:
+      type: "string"
+      required: true
+      regex: "^[A-Z]{2}$"
+      description: "ISO 3166-1 alpha-2 card issuing bank country code"
+    merchant_country:
+      type: "string"
+      required: false
+      regex: "^[A-Z]{2}$"
+      default: "IE"
+      description: "ISO 3166-1 alpha-2 merchant acquirer processing country code"
+    card_brand:
+      type: "string"
+      required: true
+      enum: ["visa", "mastercard", "amex", "discover", "jcb", "unionpay", "diners"]
+      description: "Payment card brand"
+    fraud_score:
+      type: "float"
+      required: false
+      min: 0.0
+      max: 1.0
+      default: 0.10
+      description: "Calibrated fraud risk score from upstream fraud screener"
+    acquirer_tra_rate:
+      type: "float"
+      required: false
+      min: 0.0
+      max: 0.05
+      default: 0.0004
+      description: "Rolling 90-day acquirer fraud rate for RTS Article 18 TRA eligibility"
+    is_recurring:
+      type: "boolean"
+      required: false
+      default: false
+      description: "Whether transaction is a merchant-initiated recurring/subscription charge (MIT)"
+    delegated_auth_supported:
+      type: "boolean"
+      required: false
+      default: false
+      description: "Whether device and merchant support FIDO2/WebAuthn delegated authentication"
+    mcc:
+      type: "string"
+      required: false
+      regex: "^[0-9]{4}$"
+      description: "Merchant Category Code"
+
+choices:
+  tra_exemption:
+    display_name: "Transaction Risk Analysis Exemption"
+    provider: "psd2_sca"
+    region: "EEA"
+    base_fee_bps: 0
+    fixed_fee_cents: 0
+    sla_expected_ms: 6.0
+    specialties: ["frictionless_checkout", "rts_article_18"]
+    metadata:
+      action: "REQUEST_TRA_EXEMPTION"
+      exemption_type: "TRA"
+      frictionless: true
+      expected_acceptance_rate: 0.94
+      article: "PSD2 RTS Article 18"
+
+  low_value:
+    display_name: "Low-Value Payment Exemption"
+    provider: "psd2_sca"
+    region: "EEA"
+    base_fee_bps: 0
+    fixed_fee_cents: 0
+    sla_expected_ms: 4.0
+    specialties: ["sub_30_eur_frictionless", "rts_article_16"]
+    metadata:
+      action: "REQUEST_LOW_VALUE_EXEMPTION"
+      exemption_type: "LOW_VALUE"
+      frictionless: true
+      expected_acceptance_rate: 0.98
+      article: "PSD2 RTS Article 16"
+
+  secure_corporate:
+    display_name: "Secure Corporate Payment Exemption"
+    provider: "psd2_sca"
+    region: "EEA"
+    base_fee_bps: 0
+    fixed_fee_cents: 0
+    sla_expected_ms: 5.0
+    specialties: ["b2b_exemption", "rts_article_17"]
+    metadata:
+      action: "REQUEST_CORPORATE_EXEMPTION"
+      exemption_type: "CORPORATE"
+      frictionless: true
+      expected_acceptance_rate: 0.96
+      article: "PSD2 RTS Article 17"
+
+  challenge:
+    display_name: "Mandatory Step-Up SCA Challenge"
+    provider: "emvco_3ds"
+    region: "GLOBAL"
+    base_fee_bps: 0
+    fixed_fee_cents: 0
+    sla_expected_ms: 12.0
+    specialties: ["liability_shift", "biometric_step_up", "otp_sms"]
+    metadata:
+      action: "REQUIRE_3DS_CHALLENGE"
+      exemption_type: "NONE"
+      frictionless: false
+      expected_acceptance_rate: 0.88
+      article: "PSD2 Article 97"
+
+primitives:
+  choice:
+    default_choice: "challenge"
+    fallback_chain:
+      tra_exemption: ["challenge"]
+      low_value: ["tra_exemption", "challenge"]
+      secure_corporate: ["challenge"]
+      challenge: []
+    weights:
+      currency_affinity: 0.25
+      geo_affinity: 0.35
+      brand_affinity: 0.15
+      cost_optimization: 0.25
+
+  score:
+    scaling_method: "temperature_scaling"
+    temperature: 0.80
+    brier_score_target: 0.055
+    confidence_floor: 0.45
+    uncertainty_threshold: 0.35
+    utility_factors:
+      fraud_risk_impact: 0.45
+      eea_in_scope_check: 0.25
+      amount_tier_check: 0.20
+      acquirer_tra_status: 0.10
+
+  noul:
+    circuit_breaker_active: true
+    fallback_action: "challenge"
+    rules:
+      - name: "statutory_tra_cap"
+        condition: "amount_eur > 500.0"
+        action: "challenge"
+        reason: "PSD2 RTS Article 18 prohibits TRA exemptions for amounts strictly greater than €500."
+      - name: "high_fraud_score_force_challenge"
+        condition: "fraud_score >= 0.40"
+        action: "challenge"
+        reason: "Elevated fraud score from screening stage invalidates TRA low-risk criteria."
+      - name: "out_of_scope_one_leg_out"
+        condition: "bin_country not in ['AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IS', 'IE', 'IT', 'LV', 'LI', 'LT', 'LU', 'MT', 'NL', 'NO', 'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE', 'GB'] and merchant_country not in ['AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IS', 'IE', 'IT', 'LV', 'LI', 'LT', 'LU', 'MT', 'NL', 'NO', 'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE', 'GB']"
+        action: "tra_exemption"
+        reason: "One-leg-out transaction outside EEA regulatory scope; SCA not mandated."
+      - name: "statutory_low_value_threshold"
+        condition: "amount_eur <= 30.0 and fraud_score < 0.20"
+        action: "low_value"
+        reason: "Transaction qualifies for PSD2 RTS Article 16 Low-Value payment exemption."
+
+calibration:
+  method: "temperature_scaling"
+  temperature: 0.80
+  brier_score_target: 0.055
+  expected_calibration_error: 0.032
+  validation_sample_size: 2000

@@ -1,0 +1,64 @@
+{
+  "certificate_id": "CERT-REAL-1794814063-DECE1D",
+  "spec_id": "real_data_benchmark_spec_v1",
+  "model_tier": "sub_billion_tabular_sdm",
+  "hardware_device": "MPS",
+  "certified_at": "2026-11-16T07:27:43.640393+00:00",
+  "status": "CERTIFIED_ENTERPRISE_READY",
+  "is_certified": true,
+  "empirical_metrics": {
+    "dataset_summary": {
+      "total_transactions": 10000,
+      "legitimate_count": 9962,
+      "fraud_count": 38,
+      "fraud_prevalence_pct": 0.38
+    },
+    "model_quality": {
+      "roc_auc": 0.9972,
+      "pr_auc": 0.9692,
+      "brier_score": 0.090746,
+      "expected_calibration_error": 0.2935,
+      "accuracy_pct": 99.61,
+      "precision": 0.4933,
+      "recall": 0.9737,
+      "f1_score": 0.6549
+    },
+    "latency_and_throughput": {
+      "device_used": "MPS",
+      "p50_latency_ms": 0.0139,
+      "p90_latency_ms": 0.0717,
+      "p95_latency_ms": 0.0803,
+      "p99_latency_ms": 0.5106,
+      "max_latency_ms": 1.7131,
+      "avg_latency_ms": 0.0379,
+      "throughput_tps": 26226.0,
+      "sla_breaches_count": 0,
+      "sla_adherence_pct": 100.0
+    },
+    "counterfactual_economic_lift": {
+      "baseline_approval_rate_pct": 94.03,
+      "optimized_approval_rate_pct": 99.63,
+      "approval_rate_lift_bps": 560.1,
+      "false_declines_prevented": 595,
+      "fraud_losses_averted_usd": 2348.76,
+      "net_economic_lift_usd": 143517.5
+    },
+    "robustness": {
+      "resilience_score": 0.9998,
+      "max_perturbation_flip_pct": 0.02
+    }
+  },
+  "sha256_audit_seal": "5b2e2f37b95a5290609133481a81785e078bfa61f5668b533f13c420918f740e",
+  "verification_payload": {
+    "certificate_id": "CERT-REAL-1794814063-DECE1D",
+    "certified_at": "2026-11-16T07:27:43.640393+00:00",
+    "dataset": "ULB_TensorFlow_CreditCard_Benchmark_10k",
+    "device": "MPS",
+    "total_transactions": 10000,
+    "roc_auc": 0.9972,
+    "brier_score": 0.090746,
+    "p95_latency_ms": 0.0803,
+    "approval_lift_bps": 560.1,
+    "status": "CERTIFIED_PRODUCTION_READY"
+  }
+}

@@ -1,0 +1,23 @@
+[
+  {
+    "model_id": "mac_fintech_specialist_sdm",
+    "client_id": "mac_fintech_specialist",
+    "model_name": "Apple Silicon Specialist SDM",
+    "parameter_tier": "small",
+    "parameter_count": 801411,
+    "raw_size_mb": 3.06,
+    "package_path": "/Users/piyushdua/payment_decision_factory/artifacts/mac_factory/mac_fintech_specialist_sdm.sdmpkg",
+    "sha256_audit_hash": "9e02b170e363d239628763ca2ac28a25e1cd78efb172de10ad4b3d5219edf2ad",
+    "status": "CERTIFIED_ENTERPRISE_READY",
+    "validation_accuracy": 0.9975,
+    "brier_score": 0.003,
+    "p50_latency_ms": 1.067,
+    "p99_latency_ms": 1.255,
+    "created_at": "2026-11-16T22:35:36.332949+00:00",
+    "tags": [
+      "apple_silicon",
+      "mps",
+      "sub_millisecond"
+    ]
+  }
+]

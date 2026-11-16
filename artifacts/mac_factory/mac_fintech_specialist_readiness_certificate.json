@@ -1,0 +1,147 @@
+{
+  "certificate_id": "cert_ent_1794816981_5b6224c",
+  "spec_id": "smart_routing_v1",
+  "model_name": "mac_fintech_specialist_sdm",
+  "model_tier": "small",
+  "certified_at": "2026-11-16T08:16:21.008904+00:00",
+  "status": "CERTIFIED_ENTERPRISE_READY",
+  "is_certified": true,
+  "reasons": [
+    "All enterprise latency SLA, counterfactual uplift, and robustness thresholds satisfied."
+  ],
+  "total_transactions_tested": 500,
+  "latency_profile": {
+    "total_samples": 500,
+    "p50_latency_ms": 1.067,
+    "p90_latency_ms": 1.101,
+    "p95_latency_ms": 1.115,
+    "p99_latency_ms": 1.255,
+    "max_latency_ms": 3.17,
+    "avg_latency_ms": 1.08,
+    "sla_budget_ms": 15.0,
+    "sla_breaches_count": 0,
+    "sla_adherence_pct": 100.0,
+    "throughput_tps": 925.2
+  },
+  "counterfactual_report": {
+    "total_replayed": 500,
+    "baseline_approval_rate": 0.978,
+    "model_approval_rate": 0.984,
+    "approval_uplift_bps": 60.0,
+    "baseline_total_fees_usd": 164.91,
+    "model_total_fees_usd": 163.93,
+    "fee_savings_usd": 0.98,
+    "baseline_net_value_usd": 359.78,
+    "model_net_value_usd": 363.79,
+    "net_financial_gain_usd": 4.01,
+    "routing_changes_count": 0,
+    "routing_change_pct": 0.0
+  },
+  "robustness_report": {
+    "baseline_approval_rate": 1.0,
+    "perturbed_metrics": {
+      "noise_std_0.01": {
+        "decision_flip_pct": 0.0,
+        "perturbed_approval_rate": 1.0
+      },
+      "noise_std_0.05": {
+        "decision_flip_pct": 0.0,
+        "perturbed_approval_rate": 1.0
+      },
+      "noise_std_0.10": {
+        "decision_flip_pct": 0.0,
+        "perturbed_approval_rate": 1.0
+      }
+    },
+    "resilience_score": 1.0,
+    "max_decision_flip_pct": 0.0,
+    "drift_detected": false
+  },
+  "self_adjustment_result": {
+    "initial_kpis": {
+      "total_transactions": 500,
+      "approved_count": 489,
+      "declined_count": 11,
+      "timeouts_count": 3,
+      "approval_rate": 0.978,
+      "total_fees_usd": 164.56,
+      "average_fee_usd": 0.3291,
+      "total_losses_usd": 1.89,
+      "net_economic_value_usd": 357.16,
+      "simulated_latency_avg_ms": 114.94,
+      "simulated_latency_p95_ms": 156.63,
+      "brier_score": 0.1387,
+      "choice_distribution": {
+        "stripe_us": 500
+      },
+      "choice_percentages": {
+        "stripe_us": 100.0
+      }
+    },
+    "final_kpis": {
+      "total_transactions": 500,
+      "approved_count": 491,
+      "declined_count": 9,
+      "timeouts_count": 3,
+      "approval_rate": 0.982,
+      "total_fees_usd": 164.58,
+      "average_fee_usd": 0.3292,
+      "total_losses_usd": 1.36,
+      "net_economic_value_usd": 361.71,
+      "simulated_latency_avg_ms": 115.84,
+      "simulated_latency_p95_ms": 159.42,
+      "brier_score": 0.0432,
+      "choice_distribution": {
+        "stripe_us": 500
+      },
+      "choice_percentages": {
+        "stripe_us": 100.0
+      }
+    },
+    "parameter_deltas": {
+      "temperature": {
+        "before": 0.85,
+        "after": 0.4
+      },
+      "confidence_floor": {
+        "before": 0.4,
+        "after": 0.35000000000000003
+      },
+      "weights": {
+        "before": {
+          "currency_affinity": 0.35,
+          "geo_affinity": 0.4,
+          "brand_affinity": 0.15,
+          "cost_optimization": 0.1
+        },
+        "after": {
+          "currency_affinity": 0.3,
+          "geo_affinity": 0.4,
+          "brand_affinity": 0.15,
+          "cost_optimization": 0.15
+        }
+      }
+    },
+    "uplift_kpis": {
+      "approval_rate_gain_bps": 40.0,
+      "brier_improvement": 0.0955,
+      "fee_reduction_pct": -0.01,
+      "net_economic_gain_usd": 4.56
+    },
+    "optimization_duration_sec": 0.53
+  },
+  "summary_kpis": {
+    "p50_latency_ms": 1.067,
+    "p95_latency_ms": 1.115,
+    "p99_latency_ms": 1.255,
+    "throughput_tps": 925.2,
+    "approval_rate": 0.984,
+    "approval_uplift_bps": 60.0,
+    "fee_savings_usd": 0.98,
+    "net_benefit_usd": 4.01,
+    "noise_resilience_score": 1.0,
+    "calibrated_temperature": 0.4,
+    "brier_improvement": 0.0955
+  },
+  "sha256_audit_hash": "9e02b170e363d239628763ca2ac28a25e1cd78efb172de10ad4b3d5219edf2ad"
+}

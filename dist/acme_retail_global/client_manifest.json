@@ -1,0 +1,46 @@
+{
+  "client_name": "Acme Retail Global",
+  "client_id": "acme_retail_global",
+  "factory_version": "1.0.0",
+  "generation_timestamp": 1794730566.022738,
+  "pipeline_build_time_seconds": 16.79,
+  "total_fleet_size_kb": 230.4,
+  "specialist_models": {
+    "routing": {
+      "path": "models/routing_specialist.onnx",
+      "accuracy": 1.0,
+      "brier_score": 0.0,
+      "parameters": 44036,
+      "calibrated_temperature": 0.861
+    },
+    "fraud_risk": {
+      "path": "models/fraud_specialist.onnx",
+      "accuracy": 1.0,
+      "brier_score": 0.0,
+      "parameters": 44036
+    },
+    "dynamic_3ds": {
+      "path": "models/dynamic_3ds_specialist.onnx",
+      "accuracy": 1.0,
+      "brier_score": 0.0,
+      "parameters": 44036
+    },
+    "smart_retry": {
+      "path": "models/smart_retry_specialist.onnx",
+      "accuracy": 1.0,
+      "brier_score": 0.0,
+      "parameters": 44036
+    }
+  },
+  "sla_performance": {
+    "in_process_latency_p99_ms": 0.12,
+    "dag_pipeline_latency_total_ms": 0.61,
+    "production_sla_threshold_ms": 20.0,
+    "sla_passed": true
+  },
+  "projected_economic_impact": {
+    "estimated_auth_rate_lift_pct": 1.25,
+    "estimated_fee_reduction_bps": 8.4,
+    "projected_annual_recovered_revenue_usd": 3187.5
+  }
+}

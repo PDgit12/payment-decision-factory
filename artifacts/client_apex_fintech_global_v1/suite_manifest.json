@@ -1,0 +1,18 @@
+{
+  "client": "Apex_Fintech_Global",
+  "specialists_trained": [
+    "routing_specialist_sdm",
+    "fraud_risk_specialist_sdm",
+    "dynamic_3ds_specialist_sdm",
+    "smart_retry_specialist_sdm"
+  ],
+  "training_time_total_seconds": 2.46,
+  "total_bundle_size_mb": 1.7,
+  "calibrated_brier_scores": {
+    "routing": 0.0,
+    "fraud": 0.038,
+    "dynamic_3ds": 0.042,
+    "retry": 0.046
+  },
+  "live_p99_latency_ms": 0.09
+}

@@ -1,0 +1,29 @@
+{
+  "client_id": "mac_fintech_specialist",
+  "status": "CERTIFIED_ENTERPRISE_READY",
+  "hardware": {
+    "chip_model": "Apple M4",
+    "os_version": "Darwin 26.7.3",
+    "total_ram_gb": 16.0,
+    "mps_available": true,
+    "mps_built": true,
+    "pytorch_version": "2.10.0",
+    "optimal_device": "mps"
+  },
+  "parameter_tier": "small",
+  "parameter_count": 801411,
+  "raw_fp32_mb": 3.06,
+  "train_time_seconds": 7.75,
+  "validation_accuracy": 0.9975,
+  "brier_score": 0.003,
+  "digital_twin_status": "CERTIFIED_ENTERPRISE_READY",
+  "sha256_audit_hash": "9e02b170e363d239628763ca2ac28a25e1cd78efb172de10ad4b3d5219edf2ad",
+  "p50_latency_ms": 1.067,
+  "p95_latency_ms": 1.115,
+  "p99_latency_ms": 1.255,
+  "throughput_tps": 925.2,
+  "sealed_package_path": "/Users/piyushdua/payment_decision_factory/artifacts/mac_factory/mac_fintech_specialist_sdm.sdmpkg",
+  "onnx_path": "/Users/piyushdua/payment_decision_factory/artifacts/mac_factory/mac_fintech_specialist_sdm.onnx",
+  "readiness_cert_path": "/Users/piyushdua/payment_decision_factory/artifacts/mac_factory/mac_fintech_specialist_readiness_certificate.json",
+  "created_at": "2026-11-16T08:16:27.252167+00:00"
+}
