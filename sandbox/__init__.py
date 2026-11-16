@@ -45,6 +45,7 @@ from payment_decision_factory.sandbox.failure_modes import (
 from payment_decision_factory.sandbox.real_data_evaluator import (
     RealDataEvaluationMetrics,
     RealDataDigitalTwinEvaluator,
+    RealDataEvaluator,
     compute_expected_calibration_error,
     run_and_save_real_data_certification,
 )
@@ -84,6 +85,7 @@ __all__ = [
     "ProductionFailureSimulator",
     "RealDataEvaluationMetrics",
     "RealDataDigitalTwinEvaluator",
+    "RealDataEvaluator",
     "compute_expected_calibration_error",
     "run_and_save_real_data_certification",
 ]

@@ -795,6 +795,33 @@ def test_agent_load_real_creditcard_sdm_package():
     assert res.latency_ms < 5.0
 
 
+def test_agent_zero_pan_sanitization():
+    agent = FraudScreenerAgent()
+    payload = {
+        "amount": 50.0,
+        "currency": "USD",
+        "card_brand": "visa",
+        "bin_country": "US",
+        "ip_country": "US",
+        "mcc": "5411",
+        "velocity_1h": 1,
+        "is_anonymous_ip": False,
+        "cvv_result": "match",
+        "card_number": "4111111111111111",  # Forbidden raw PAN
+        "pan": "4111111111111111",          # Forbidden raw PAN
+    }
+    extracted = agent._extract_inputs(payload)
+    assert "card_number" not in extracted
+    assert "pan" not in extracted
+    assert extracted["amount"] == 50.0
+
+    res = agent.decide_sync(payload)
+    assert res.choice == "allow"
+    assert "card_number" not in res.metadata
+    assert "pan" not in res.metadata
+
+
+
 
 
 

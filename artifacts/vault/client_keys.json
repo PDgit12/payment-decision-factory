@@ -68,5 +68,33 @@
       "evaluate",
       "export"
     ]
+  },
+  {
+    "key_id": "key_600c8e2ab4b3",
+    "client_id": "test_merchant_corp",
+    "license_key": "lic_test_merchant_corp_9e374343215a7e4fe3252a6e24bec81d",
+    "label": "Stripe/Adyen Hotpath Key",
+    "created_at": "2026-11-16T23:25:41.004864+00:00",
+    "expires_at": null,
+    "is_active": true,
+    "permissions": [
+      "read",
+      "evaluate",
+      "export"
+    ]
+  },
+  {
+    "key_id": "key_26a62454153d",
+    "client_id": "test_merchant_corp",
+    "license_key": "lic_test_merchant_corp_2c72eda1838725e61f0248851144ab59",
+    "label": "Stripe/Adyen Hotpath Key",
+    "created_at": "2026-11-16T23:30:25.600124+00:00",
+    "expires_at": null,
+    "is_active": true,
+    "permissions": [
+      "read",
+      "evaluate",
+      "export"
+    ]
   }
 ]

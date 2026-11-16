@@ -383,12 +383,19 @@ class BaseDecisionAgent(PaymentAgent):
                 sca_choice = context.get("three_ds_choice")
                 if sca_choice is not None:
                     inputs["three_ds_choice"] = str(sca_choice)
-            return inputs
 
         elif isinstance(context, dict):
-            return dict(context)
+            inputs = dict(context)
 
-        return {}
+        else:
+            inputs = {}
+
+        # Pre-flight Zero-PAN sanitization: ensure no raw card numbers enter decision agents
+        for pan_key in ("pan", "card_number", "full_pan", "credit_card_number", "raw_pan"):
+            if pan_key in inputs:
+                del inputs[pan_key]
+
+        return inputs
 
     async def decide(self, context: Union[TransactionContext, Dict[str, Any]]) -> AgentDecisionResult:
         """

@@ -111,6 +111,31 @@ class TestEnterpriseSubBillionSDMArchitecture:
         prob_sums = probs.sum(dim=-1)
         torch.testing.assert_close(prob_sums, torch.ones(batch_size), atol=1e-5, rtol=1e-5)
 
+    def test_create_specialist_unified_architecture(self):
+        """Verifies the 85.1M parameter Unified Enterprise Specialist SDM."""
+        model = EnterpriseSubBillionSDM.create_specialist(
+            num_continuous_features=30,
+            num_classes=2,
+            specialist_name="enterprise_routing_specialist",
+        )
+        assert model.hidden_dim == 768
+        assert model.num_layers == 12
+        assert model.num_heads == 12
+        assert model.specialist_name == "enterprise_routing_specialist"
+
+        param_count = model.count_parameters()
+        assert 80_000_000 <= param_count <= 90_000_000, f"Expected ~85.1M params, got {param_count:,}"
+
+        # Test forward pass and Platt temperature calibration
+        model.eval()
+        x = torch.randn(2, 30)
+        with torch.no_grad():
+            logits, probs = model(x)
+            assert logits.shape == (2, 2)
+            assert probs.shape == (2, 2)
+            prob_sums = probs.sum(dim=-1)
+            torch.testing.assert_close(prob_sums, torch.ones(2), atol=1e-5, rtol=1e-5)
+
     def test_temperature_calibration(self):
         model = EnterpriseSubBillionSDM(
             num_continuous_features=4,

@@ -161,10 +161,11 @@ class SealedPackageClient:
                     pass
 
             idx = 25
+            banned = {"pan", "card_number", "credit_card", "full_pan", "account_number", "amount", "velocity_1h", "currency", "bin_country", "card_brand", "mcc", "metadata"}
             for k, v in payload.items():
                 if idx >= input_dim:
                     break
-                if k not in ("amount", "velocity_1h", "currency", "bin_country", "card_brand", "mcc", "metadata"):
+                if str(k).lower() not in banned:
                     try:
                         vec[idx] = float(v)
                         idx += 1

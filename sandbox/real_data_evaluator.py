@@ -170,12 +170,15 @@ class RealDataDigitalTwinEvaluator:
     def __init__(
         self,
         data_path: Optional[str] = None,
+        csv_path: Optional[str] = None,
+        sample_size: Optional[int] = None,
         sla_budget_ms: float = 15.0,
         random_seed: int = 42,
     ):
-        self.data_path = data_path or os.path.join(
+        self.data_path = csv_path or data_path or os.path.join(
             os.path.dirname(os.path.dirname(__file__)), "data", "creditcard_sample.csv"
         )
+        self.sample_size = sample_size
         self.sla_budget_ms = sla_budget_ms
         self.random_seed = random_seed
         self._load_data()
@@ -186,6 +189,9 @@ class RealDataDigitalTwinEvaluator:
             raise FileNotFoundError(f"Real data file not found at: {self.data_path}")
 
         self.df = pd.read_csv(self.data_path)
+        if self.sample_size is not None and self.sample_size < len(self.df):
+            self.df = self.df.iloc[: self.sample_size].copy()
+
         # Features are Time, V1..V28, Amount
         self.feature_cols = [c for c in self.df.columns if c not in ["Class"]]
         self.X_raw = self.df[self.feature_cols].values.astype(np.float32)
@@ -417,10 +423,15 @@ class RealDataDigitalTwinEvaluator:
             "is_certified": is_certified,
             "empirical_metrics": metrics.to_dict(),
             "sha256_audit_seal": sha256_audit_hash,
+            "sha256_audit_hash": sha256_audit_hash,
             "verification_payload": canonical_seal_payload,
         }
 
         return metrics, certificate_dict
+
+
+# Canonical Alias for scripts and SDK modules
+RealDataEvaluator = RealDataDigitalTwinEvaluator
 
 
 def run_and_save_real_data_certification(

@@ -50,8 +50,14 @@ class PaymentContext(BaseModel):
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> PaymentContext:
-        """Create a PaymentContext instance from a dictionary."""
-        return cls(**data)
+        """Create a PaymentContext instance from a dictionary, stripping any prohibited raw PAN attributes."""
+        banned = {"pan", "card_number", "credit_card", "full_pan", "account_number", "primary_account_number"}
+        sanitized = {k: v for k, v in data.items() if str(k).lower() not in banned}
+        if "metadata" in sanitized and isinstance(sanitized["metadata"], dict):
+            sanitized["metadata"] = {
+                k: v for k, v in sanitized["metadata"].items() if str(k).lower() not in banned
+            }
+        return cls(**sanitized)
 
 
 class DecisionResult(BaseModel):

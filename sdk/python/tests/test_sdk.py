@@ -45,6 +45,28 @@ class TestPaymentModels:
         assert ctx.mcc == "5411"
         assert ctx.to_dict()["amount"] == 49.99
 
+    def test_payment_context_zero_pan_sanitization(self):
+        """Verifies raw PAN is automatically sanitized under PCI-DSS 4.0 Requirement 3.3.1."""
+        raw_data = {
+            "amount": 99.0,
+            "currency": "USD",
+            "card_brand": "visa",
+            "bin_country": "US",
+            "mcc": "5411",
+            "pan": "4111111111111111",
+            "card_number": "4242424242424242",
+            "metadata": {
+                "order_id": "ord_123",
+                "full_pan": "4000000000000002",
+            },
+        }
+        ctx = PaymentContext.from_dict(raw_data)
+        d = ctx.to_dict()
+        assert "pan" not in d
+        assert "card_number" not in d
+        assert "full_pan" not in d["metadata"]
+        assert d["metadata"]["order_id"] == "ord_123"
+
     def test_payment_context_invalid_amount(self):
         with pytest.raises(Exception):
             PaymentContext(
