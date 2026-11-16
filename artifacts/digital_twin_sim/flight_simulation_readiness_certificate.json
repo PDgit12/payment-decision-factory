@@ -1,9 +1,9 @@
 {
-  "certificate_id": "CERT-REAL-1794871378-DECE1D",
+  "certificate_id": "CERT-REAL-1794872265-DECE1D",
   "spec_id": "real_data_benchmark_spec_v1",
   "model_tier": "sub_billion_tabular_sdm",
   "hardware_device": "MPS",
-  "certified_at": "2026-11-16T23:22:58.969608+00:00",
+  "certified_at": "2026-11-16T23:37:45.335326+00:00",
   "status": "CERTIFIED_ENTERPRISE_READY",
   "is_certified": true,
   "empirical_metrics": {
@@ -25,13 +25,13 @@
     },
     "latency_and_throughput": {
       "device_used": "MPS",
-      "p50_latency_ms": 0.0021,
-      "p90_latency_ms": 0.0029,
-      "p95_latency_ms": 0.0033,
-      "p99_latency_ms": 0.3822,
-      "max_latency_ms": 0.8571,
-      "avg_latency_ms": 0.0133,
-      "throughput_tps": 74601.8,
+      "p50_latency_ms": 0.0019,
+      "p90_latency_ms": 0.0027,
+      "p95_latency_ms": 0.0032,
+      "p99_latency_ms": 0.0536,
+      "max_latency_ms": 0.5803,
+      "avg_latency_ms": 0.0043,
+      "throughput_tps": 228370.7,
       "sla_breaches_count": 0,
       "sla_adherence_pct": 100.0
     },
@@ -48,17 +48,17 @@
       "max_perturbation_flip_pct": 0.02
     }
   },
-  "sha256_audit_seal": "9bb45f387f3f488ae41f5910d87862e97192994eae76d8c28979c1172d5f7bcc",
-  "sha256_audit_hash": "9bb45f387f3f488ae41f5910d87862e97192994eae76d8c28979c1172d5f7bcc",
+  "sha256_audit_seal": "d4bc5c37a15c36a3d69979f601ee42bd1cd5612b77f86e225a765156c669df56",
+  "sha256_audit_hash": "d4bc5c37a15c36a3d69979f601ee42bd1cd5612b77f86e225a765156c669df56",
   "verification_payload": {
-    "certificate_id": "CERT-REAL-1794871378-DECE1D",
-    "certified_at": "2026-11-16T23:22:58.969608+00:00",
+    "certificate_id": "CERT-REAL-1794872265-DECE1D",
+    "certified_at": "2026-11-16T23:37:45.335326+00:00",
     "dataset": "ULB_TensorFlow_CreditCard_Benchmark_10k",
     "device": "MPS",
     "total_transactions": 10000,
     "roc_auc": 0.9972,
     "brier_score": 0.090746,
-    "p95_latency_ms": 0.0033,
+    "p95_latency_ms": 0.0032,
     "approval_lift_bps": 560.1,
     "status": "CERTIFIED_PRODUCTION_READY"
   }
