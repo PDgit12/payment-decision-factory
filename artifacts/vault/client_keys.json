@@ -96,5 +96,19 @@
       "evaluate",
       "export"
     ]
+  },
+  {
+    "key_id": "key_e7e70e1ff26e",
+    "client_id": "test_merchant_corp",
+    "license_key": "lic_test_merchant_corp_dd5d6c3dff592d953342c5405151fdba",
+    "label": "Stripe/Adyen Hotpath Key",
+    "created_at": "2026-11-16T23:38:46.365501+00:00",
+    "expires_at": null,
+    "is_active": true,
+    "permissions": [
+      "read",
+      "evaluate",
+      "export"
+    ]
   }
 ]
