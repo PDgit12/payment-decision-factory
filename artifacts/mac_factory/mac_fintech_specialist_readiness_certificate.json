@@ -1,39 +1,40 @@
 {
-  "certificate_id": "cert_ent_1794884974_5b6224c",
+  "certificate_id": "cert_ent_1794906238_5b6224c",
   "spec_id": "smart_routing_v1",
   "model_name": "mac_fintech_specialist_sdm",
-  "model_tier": "small",
-  "certified_at": "2026-11-17T03:09:34.979308+00:00",
-  "status": "CERTIFIED_ENTERPRISE_READY",
-  "is_certified": true,
+  "model_tier": "flagship",
+  "certified_at": "2026-11-17T09:03:58.403065+00:00",
+  "status": "REJECTED_SLA_BREACH",
+  "is_certified": false,
   "reasons": [
-    "All enterprise latency SLA, counterfactual uplift, and robustness thresholds satisfied."
+    "P95 latency breach: 75.72ms exceeds 15.0ms SLA budget",
+    "SLA adherence 0.0% below minimum 98.0%"
   ],
   "total_transactions_tested": 500,
   "latency_profile": {
     "total_samples": 500,
-    "p50_latency_ms": 0.863,
-    "p90_latency_ms": 0.905,
-    "p95_latency_ms": 0.917,
-    "p99_latency_ms": 0.962,
-    "max_latency_ms": 1.592,
-    "avg_latency_ms": 0.866,
+    "p50_latency_ms": 72.798,
+    "p90_latency_ms": 75.043,
+    "p95_latency_ms": 75.716,
+    "p99_latency_ms": 82.823,
+    "max_latency_ms": 1310.187,
+    "avg_latency_ms": 74.618,
     "sla_budget_ms": 15.0,
-    "sla_breaches_count": 0,
-    "sla_adherence_pct": 100.0,
-    "throughput_tps": 1154.0
+    "sla_breaches_count": 500,
+    "sla_adherence_pct": 0.0,
+    "throughput_tps": 13.4
   },
   "counterfactual_report": {
     "total_replayed": 500,
     "baseline_approval_rate": 0.978,
     "model_approval_rate": 0.984,
     "approval_uplift_bps": 60.0,
-    "baseline_total_fees_usd": 164.91,
-    "model_total_fees_usd": 163.93,
-    "fee_savings_usd": 0.98,
-    "baseline_net_value_usd": 359.78,
-    "model_net_value_usd": 363.79,
-    "net_financial_gain_usd": 4.01,
+    "baseline_total_fees_usd": 167.07,
+    "model_total_fees_usd": 165.18,
+    "fee_savings_usd": 1.89,
+    "baseline_net_value_usd": 433.03,
+    "model_net_value_usd": 401.02,
+    "net_financial_gain_usd": -32.01,
     "routing_changes_count": 0,
     "routing_change_pct": 0.0
   },
@@ -64,13 +65,13 @@
       "declined_count": 11,
       "timeouts_count": 3,
       "approval_rate": 0.978,
-      "total_fees_usd": 164.56,
-      "average_fee_usd": 0.3291,
-      "total_losses_usd": 1.89,
-      "net_economic_value_usd": 357.16,
-      "simulated_latency_avg_ms": 114.9,
-      "simulated_latency_p95_ms": 156.6,
-      "brier_score": 0.1387,
+      "total_fees_usd": 166.76,
+      "average_fee_usd": 0.3335,
+      "total_losses_usd": 1.65,
+      "net_economic_value_usd": 432.64,
+      "simulated_latency_avg_ms": 115.0,
+      "simulated_latency_p95_ms": 156.63,
+      "brier_score": 0.1388,
       "choice_distribution": {
         "stripe_us": 500
       },
@@ -84,12 +85,12 @@
       "declined_count": 9,
       "timeouts_count": 3,
       "approval_rate": 0.982,
-      "total_fees_usd": 164.58,
-      "average_fee_usd": 0.3292,
-      "total_losses_usd": 1.36,
-      "net_economic_value_usd": 361.71,
-      "simulated_latency_avg_ms": 115.82,
-      "simulated_latency_p95_ms": 159.39,
+      "total_fees_usd": 166.71,
+      "average_fee_usd": 0.3334,
+      "total_losses_usd": 1.57,
+      "net_economic_value_usd": 432.33,
+      "simulated_latency_avg_ms": 115.84,
+      "simulated_latency_p95_ms": 159.42,
       "brier_score": 0.0432,
       "choice_distribution": {
         "stripe_us": 500
@@ -125,23 +126,23 @@
     "uplift_kpis": {
       "approval_rate_gain_bps": 40.0,
       "brier_improvement": 0.0955,
-      "fee_reduction_pct": -0.01,
-      "net_economic_gain_usd": 4.56
+      "fee_reduction_pct": 0.03,
+      "net_economic_gain_usd": -0.31
     },
-    "optimization_duration_sec": 0.28
+    "optimization_duration_sec": 0.69
   },
   "summary_kpis": {
-    "p50_latency_ms": 0.863,
-    "p95_latency_ms": 0.917,
-    "p99_latency_ms": 0.962,
-    "throughput_tps": 1154.0,
+    "p50_latency_ms": 72.798,
+    "p95_latency_ms": 75.716,
+    "p99_latency_ms": 82.823,
+    "throughput_tps": 13.4,
     "approval_rate": 0.984,
     "approval_uplift_bps": 60.0,
-    "fee_savings_usd": 0.98,
-    "net_benefit_usd": 4.01,
+    "fee_savings_usd": 1.89,
+    "net_benefit_usd": -32.01,
     "noise_resilience_score": 1.0,
     "calibrated_temperature": 0.4,
     "brier_improvement": 0.0955
   },
-  "sha256_audit_hash": "d97f985766f381e6a691e638f07496269bcd5d0b9d85cfbad0141352ba8f954f"
+  "sha256_audit_hash": "7aba57e8532d44eb4587c36d548998abb80eba2a225c160ccff79213e65de2af"
 }

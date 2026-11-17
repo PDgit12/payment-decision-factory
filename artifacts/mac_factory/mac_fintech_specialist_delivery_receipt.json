@@ -1,6 +1,6 @@
 {
   "client_id": "mac_fintech_specialist",
-  "status": "CERTIFIED_ENTERPRISE_READY",
+  "status": "REJECTED_SLA_BREACH",
   "hardware": {
     "chip_model": "Apple M4",
     "os_version": "Darwin 26.7.3",
@@ -10,20 +10,20 @@
     "pytorch_version": "2.10.0",
     "optimal_device": "mps"
   },
-  "parameter_tier": "small",
-  "parameter_count": 801411,
-  "raw_fp32_mb": 3.06,
-  "train_time_seconds": 1.95,
-  "validation_accuracy": 0.987,
-  "brier_score": 0.0201,
-  "digital_twin_status": "CERTIFIED_ENTERPRISE_READY",
-  "sha256_audit_hash": "d97f985766f381e6a691e638f07496269bcd5d0b9d85cfbad0141352ba8f954f",
-  "p50_latency_ms": 0.291,
-  "p95_latency_ms": 0.302,
-  "p99_latency_ms": 0.312,
-  "throughput_tps": 1154.0,
+  "parameter_tier": "flagship",
+  "parameter_count": 201606147,
+  "raw_fp32_mb": 769.07,
+  "train_time_seconds": 11082.97,
+  "validation_accuracy": 0.9995,
+  "brier_score": 0.0012,
+  "digital_twin_status": "REJECTED_SLA_BREACH",
+  "sha256_audit_hash": "7aba57e8532d44eb4587c36d548998abb80eba2a225c160ccff79213e65de2af",
+  "p50_latency_ms": 35.855,
+  "p95_latency_ms": 37.248,
+  "p99_latency_ms": 38.971,
+  "throughput_tps": 13.4,
   "sealed_package_path": "/Users/piyushdua/payment_decision_factory/artifacts/mac_factory/mac_fintech_specialist_sdm.sdmpkg",
   "onnx_path": "/Users/piyushdua/payment_decision_factory/artifacts/mac_factory/mac_fintech_specialist_sdm.onnx",
   "readiness_cert_path": "/Users/piyushdua/payment_decision_factory/artifacts/mac_factory/mac_fintech_specialist_readiness_certificate.json",
-  "created_at": "2026-11-17T03:09:39.285931+00:00"
+  "created_at": "2026-11-17T09:08:28.407891+00:00"
 }
