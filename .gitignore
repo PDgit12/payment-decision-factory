@@ -41,3 +41,5 @@ data/creditcard_full.csv
 dist/real_flagship_build/
 dist/flagship_build/
 *.onnx.large
+artifacts/mac_factory/*.onnx
+artifacts/mac_factory/*.sdmpkg
