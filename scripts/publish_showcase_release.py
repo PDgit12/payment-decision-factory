@@ -87,12 +87,13 @@ def main():
     print(f"\n[+] Checking GitHub Release {RELEASE_TAG} on {REPO_NAME}...")
     code, out = run_cmd(["gh", "release", "view", RELEASE_TAG, "-R", REPO_NAME])
 
-    release_notes = f"""# Showcase 201M Specialist Decision Model (Apple Silicon Native)
+    tier_name = str(receipt.get("parameter_tier", "specialist")).title()
+    release_notes = f"""# Showcase {tier_name} Specialist Decision Model (Apple Silicon Native)
 
 ## 1. Specification & Topology
 - **Architecture**: Domain Tabular Transformer (FT-Transformer)
-- **Parameters**: {param_count:,} parameters (~201.6M, FP32 769.07 MB)
-- **Training Dataset**: 284,807 real European cardholder transactions (ULB / TensorFlow Benchmark)
+- **Parameters**: {param_count:,} parameters ({tier_name} Tier, FP32 {receipt.get('raw_fp32_mb', 3.06):.2f} MB)
+- **Training Dataset**: Real European cardholder transactions (ULB / TensorFlow Benchmark)
 - **Compute Hardware**: Apple Silicon M4 GPU via Metal Performance Shaders (MPS) at $0 cloud cost
 - **SHA-256 Audit Seal**: `{sha256}`
 
@@ -125,7 +126,7 @@ result = client.decide(payment_context)
             "gh", "release", "create", RELEASE_TAG,
             SDMPKG_FILE,
             ONNX_FILE,
-            "--title", f"{RELEASE_TAG}: 201M Parameter Apple Silicon Specialist SDM",
+            "--title", f"{RELEASE_TAG}: {tier_name} ({param_count:,} params) Apple Silicon Specialist SDM",
             "--notes", release_notes,
             "-R", REPO_NAME,
         ])

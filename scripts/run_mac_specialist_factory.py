@@ -121,7 +121,7 @@ client = SealedPackageClient(
 )
 
 # 0.2ms In-Memory Live Checkout Decision
-result = client.evaluate(transaction_feature_vector)
+result = client.decide(transaction_feature_vector)
 print("Decision:", result.choice, "| Confidence:", result.confidence)
 """)
     print(f"{BOLD}{CYAN}======================================================================{RESET}\n")

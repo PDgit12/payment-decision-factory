@@ -430,7 +430,7 @@ class MacSpecialistFactory:
             test_subset = X_val[:min(len(X_val), 300)]
             for vec in test_subset:
                 t0 = time.perf_counter()
-                _ = client.evaluate(vec)
+                _ = client.decide(vec)
                 latencies.append((time.perf_counter() - t0) * 1000.0)
 
             p50_bench = float(np.percentile(latencies, 50))
