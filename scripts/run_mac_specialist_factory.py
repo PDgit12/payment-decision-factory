@@ -24,6 +24,9 @@ import os
 import sys
 import time
 
+# Disable artificial MPS memory allocation limit on Apple Silicon
+os.environ["PYTORCH_MPS_HIGH_WATERMARK_RATIO"] = "0.0"
+
 # Robust unshadowing of standard library code module if local code.py exists
 _stdlib_code = os.path.join(os.path.dirname(os.__file__), "code.py")
 if os.path.exists(_stdlib_code):

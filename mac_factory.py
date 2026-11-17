@@ -306,19 +306,32 @@ class MacSpecialistFactory:
                 optimizer.step()
                 running_loss += loss.item()
                 batches += 1
+                if device.type == "mps" and batches % 200 == 0:
+                    torch.mps.empty_cache()
             avg_ep_loss = running_loss / max(batches, 1)
             epoch_losses.append(avg_ep_loss)
             _emit("TRAINING_EPOCH", {"epoch": ep + 1, "avg_loss": round(avg_ep_loss, 4)})
 
         train_seconds = time.perf_counter() - t_train_start
 
-        # Validation & Temperature Calibration
+        # Validation & Temperature Calibration with Safe Chunked Inference
         model.eval()
-        val_x_t = torch.from_numpy(X_val).to(device)
+        if device.type == "mps":
+            torch.mps.empty_cache()
+
+        val_ds = TensorDataset(torch.from_numpy(X_val))
+        val_loader = DataLoader(val_ds, batch_size=min(self.config.batch_size * 2, 512), shuffle=False)
+        all_val_probs = []
         with torch.no_grad():
-            val_logits, val_probs = model(val_x_t)
-            val_probs_np = val_probs.cpu().numpy()
-            preds = np.argmax(val_probs_np, axis=1)
+            for (b_val_x,) in val_loader:
+                b_val_x = b_val_x.to(device)
+                _, b_probs = model(b_val_x)
+                all_val_probs.append(b_probs.cpu().numpy())
+                if device.type == "mps":
+                    torch.mps.empty_cache()
+
+        val_probs_np = np.concatenate(all_val_probs, axis=0)
+        preds = np.argmax(val_probs_np, axis=1)
 
         val_accuracy = float(np.mean(preds == y_val))
         one_hot_y = np.eye(2)[y_val]
@@ -334,6 +347,8 @@ class MacSpecialistFactory:
         out_dir = Path(self.config.output_dir)
         out_dir.mkdir(parents=True, exist_ok=True)
         model_cpu = model.to("cpu")
+        if device.type == "mps":
+            torch.mps.empty_cache()
 
         val_records = []
         for i in range(min(len(X_val), 500)):
