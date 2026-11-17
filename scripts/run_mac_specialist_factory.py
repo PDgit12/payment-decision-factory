@@ -135,8 +135,18 @@ def main():
     parser.add_argument("--client", default="mac_fintech_specialist", help="Client identifier")
     parser.add_argument("--key", default="lic_mac_specialist_local_2026", help="Client license encryption key")
     parser.add_argument("--out", default="artifacts/mac_factory", help="Output directory for generated packages")
+    parser.add_argument("--threads", type=int, default=os.cpu_count() or 10,
+                        help="Number of CPU threads to saturate all cores (default: all 10 cores)")
 
     args = parser.parse_args()
+
+    # Maximize Apple Silicon core usage
+    try:
+        import torch
+        torch.set_num_threads(args.threads)
+        torch.set_num_interop_threads(args.threads)
+    except Exception:
+        pass
 
     cfg = MacFactoryConfig(
         client_id=args.client,

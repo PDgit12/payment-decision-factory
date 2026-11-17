@@ -279,6 +279,14 @@ class MacSpecialistFactory:
         criterion = nn.CrossEntropyLoss(weight=pos_weight_t)
         optimizer = torch.optim.AdamW(model.parameters(), lr=self.config.learning_rate, weight_decay=1e-2)
 
+        # Maximize multi-core CPU & GPU saturation across all Apple Silicon cores
+        try:
+            ncpu = os.cpu_count() or 10
+            torch.set_num_threads(ncpu)
+            torch.set_num_interop_threads(ncpu)
+        except Exception:
+            pass
+
         train_ds = TensorDataset(torch.from_numpy(X_train), torch.from_numpy(y_train))
         loader = DataLoader(train_ds, batch_size=self.config.batch_size, shuffle=True)
 
