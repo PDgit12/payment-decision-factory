@@ -1,9 +1,9 @@
 {
-  "certificate_id": "cert_ent_1794816981_5b6224c",
+  "certificate_id": "cert_ent_1794884974_5b6224c",
   "spec_id": "smart_routing_v1",
   "model_name": "mac_fintech_specialist_sdm",
   "model_tier": "small",
-  "certified_at": "2026-11-16T08:16:21.008904+00:00",
+  "certified_at": "2026-11-17T03:09:34.979308+00:00",
   "status": "CERTIFIED_ENTERPRISE_READY",
   "is_certified": true,
   "reasons": [
@@ -12,16 +12,16 @@
   "total_transactions_tested": 500,
   "latency_profile": {
     "total_samples": 500,
-    "p50_latency_ms": 1.067,
-    "p90_latency_ms": 1.101,
-    "p95_latency_ms": 1.115,
-    "p99_latency_ms": 1.255,
-    "max_latency_ms": 3.17,
-    "avg_latency_ms": 1.08,
+    "p50_latency_ms": 0.863,
+    "p90_latency_ms": 0.905,
+    "p95_latency_ms": 0.917,
+    "p99_latency_ms": 0.962,
+    "max_latency_ms": 1.592,
+    "avg_latency_ms": 0.866,
     "sla_budget_ms": 15.0,
     "sla_breaches_count": 0,
     "sla_adherence_pct": 100.0,
-    "throughput_tps": 925.2
+    "throughput_tps": 1154.0
   },
   "counterfactual_report": {
     "total_replayed": 500,
@@ -68,8 +68,8 @@
       "average_fee_usd": 0.3291,
       "total_losses_usd": 1.89,
       "net_economic_value_usd": 357.16,
-      "simulated_latency_avg_ms": 114.94,
-      "simulated_latency_p95_ms": 156.63,
+      "simulated_latency_avg_ms": 114.9,
+      "simulated_latency_p95_ms": 156.6,
       "brier_score": 0.1387,
       "choice_distribution": {
         "stripe_us": 500
@@ -88,8 +88,8 @@
       "average_fee_usd": 0.3292,
       "total_losses_usd": 1.36,
       "net_economic_value_usd": 361.71,
-      "simulated_latency_avg_ms": 115.84,
-      "simulated_latency_p95_ms": 159.42,
+      "simulated_latency_avg_ms": 115.82,
+      "simulated_latency_p95_ms": 159.39,
       "brier_score": 0.0432,
       "choice_distribution": {
         "stripe_us": 500
@@ -128,13 +128,13 @@
       "fee_reduction_pct": -0.01,
       "net_economic_gain_usd": 4.56
     },
-    "optimization_duration_sec": 0.53
+    "optimization_duration_sec": 0.28
   },
   "summary_kpis": {
-    "p50_latency_ms": 1.067,
-    "p95_latency_ms": 1.115,
-    "p99_latency_ms": 1.255,
-    "throughput_tps": 925.2,
+    "p50_latency_ms": 0.863,
+    "p95_latency_ms": 0.917,
+    "p99_latency_ms": 0.962,
+    "throughput_tps": 1154.0,
     "approval_rate": 0.984,
     "approval_uplift_bps": 60.0,
     "fee_savings_usd": 0.98,
@@ -143,5 +143,5 @@
     "calibrated_temperature": 0.4,
     "brier_improvement": 0.0955
   },
-  "sha256_audit_hash": "9e02b170e363d239628763ca2ac28a25e1cd78efb172de10ad4b3d5219edf2ad"
+  "sha256_audit_hash": "d97f985766f381e6a691e638f07496269bcd5d0b9d85cfbad0141352ba8f954f"
 }
