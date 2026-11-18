@@ -1,0 +1,27 @@
+{
+  "timestamp": "2026-11-17T21:02:44Z",
+  "package_path": "/Users/piyushdua/payment_decision_factory/models/real_creditcard_sdm.sdmpkg",
+  "sample_size": 300,
+  "throughput_tps": 5600.6,
+  "latency_ms": {
+    "p50": 0.158,
+    "p90": 0.16,
+    "p95": 0.162,
+    "p99": 0.167,
+    "min": 0.153,
+    "max": 0.204,
+    "mean": 0.158,
+    "std": 0.003,
+    "cold_start": 0.389
+  },
+  "accuracy": 0.1267,
+  "precision": 0.1267,
+  "recall": 1.0,
+  "f1": 0.2249,
+  "financials": {
+    "volume_authorized": 0.0,
+    "fraud_prevented": 2877.76,
+    "false_decline_cost": 23531.41,
+    "vdmp_dispute_rate_pct": 0.0
+  }
+}

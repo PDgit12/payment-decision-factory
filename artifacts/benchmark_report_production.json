@@ -1,0 +1,27 @@
+{
+  "timestamp": "2026-11-17T21:02:22Z",
+  "package_path": "/Users/piyushdua/payment_decision_factory/artifacts/mac_factory/mac_fintech_specialist_sdm.sdmpkg",
+  "sample_size": 300,
+  "throughput_tps": 27.3,
+  "latency_ms": {
+    "p50": 36.044,
+    "p90": 38.397,
+    "p95": 39.572,
+    "p99": 42.067,
+    "min": 35.264,
+    "max": 46.591,
+    "mean": 36.596,
+    "std": 1.474,
+    "cold_start": 40.981
+  },
+  "accuracy": 0.99,
+  "precision": 1.0,
+  "recall": 0.9211,
+  "f1": 0.9589,
+  "financials": {
+    "volume_authorized": 24241.07,
+    "fraud_prevented": 2168.1,
+    "false_decline_cost": 0.0,
+    "vdmp_dispute_rate_pct": 1.1321
+  }
+}
